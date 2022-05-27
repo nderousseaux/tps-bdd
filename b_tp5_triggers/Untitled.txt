@@ -1,0 +1,67 @@
+create or replace trigger monTrigger1
+ Before Update of id_rep, id_taxi, km_cpt on reparation
+ begin
+    Raise_application_error(-2001, 'Modification non autorisée');
+ end;
+ /
+
+SHOW ERRORS;
+
+
+Create sequence seq_taxi start with 1 increment by 1;
+
+create or replace trigger monTrigger2
+ Before insert on taxi
+ For each row
+ begin
+    :new.id_taxi := seq_taxi.nextval
+ end;
+ /
+
+SHOW ERRORS;
+
+Create or replace trigger monTrigger3
+Before insert on reparation
+Declare
+	reste integer;
+Begin
+	reste:=mod(:new.km_cpt, 1000);
+	if reste < 500 then
+		:new.km_cpt := new.km_cpt - reste
+	else
+		:new.km_cpt := (:new.km_cpt - reste) + 10000
+	endif;
+End;
+/
+
+CREATE OR REPLACE TRIGGER transform_ taxi
+AFTER INSERT ON TAXI
+FOR EACH ROW
+BEGIN
+INSERT INTO reparation VALUES (seq_rep.nextval, :new.Id_taxi, 'Transformati taxi', :new.km, 3000);
+END;
+/
+SHOW ERRORS
+
+
+CREATE OR REPLACE TRIGGER insert course
+BEFORE INSERT ON course
+FOR EACH ROW
+DECLARE
+CURSOR course_res IS SELECT * FROM course WHERE id_course != :new.id_course AND :new.adresse dep = adresse_dep
+AND :new.adresse_ar = adresse_ar AND abs(:new.date_course-date_ course)<5/ (24*60):
+nb_pl_v taxi.nb_places%TYPE;
+BEGIN
+FOR res_row IN course_res
+LOOP
+SELECT nb_place INTO nb_pl_v FROM taxi WHERE id_taxi = res_row.id_taxi;
+
+IF ((res_row.nb_personne_course + :new.nb_personne_course) <= nb_pl_v) THEN
+RAISE_APPLICATION_ERROR(-20084, ' course non ajoutee"):
+END IF;
+END LOOP;
+
+END;
+/
+
+SHOW ERRORS

@@ -1,0 +1,72 @@
+CREATE OR REPLACE FUNCTINO fibo(n_p int)
+RETURN INT
+IS
+BEGIN
+	IF n_p <=1 THEN RETURN 1;
+	ELSE
+		RETURN fibo(n_p-1) + fibo(n_p-2);
+	END IF;
+END;
+
+SELECT fib(5) from dual;
+
+CREATE OR REPLACE FUNCTINO fibo(n_p int)
+RETURN INT
+IS
+	n_0 INT := 1;
+	n_1 INT := 1;
+	temp INT;
+	I INT := 2;
+BEGIN
+	WHILE (i<=n_p)
+	LOOP
+		temp := n_0;
+		n_0 := n_0 + n_1;
+		n_1 := temp;
+		I:= I +1
+	END LOOP;
+	RETURN n_0;
+END;
+
+
+CREATE OR REPLACE PROCEDURE modif_nom IS
+BEGIN
+	UPDATE chauffeur SET nom_chf=initcap(nom_chf) WHERE nom_chf != initcap(nom_chf);
+	
+	IF SQL%NOTFOUND THEN
+		DBMS_OUTPUT.PUT_LINE('Aucune ligne modifiée');
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('to_char(SQL%ROWCOUNT) || ligne(s) modifiée(s)');
+	END IF;
+END;
+
+SHOW ERRORS
+
+
+CREATE OR REPLACE PROCEDURE ajout_revision IS
+	CURSOR voiture_curs IS
+		SELECT * FROM taxi;
+	voiture_row voiture_curs%rowtype;
+	nb_rep int;
+BEGIN
+	FOR voiture_row IN voiture_curs
+	LOOP
+		SELECT count(*) INTO nb_rep FROM reparation
+		WHERE id_taxi=voiture_row.id_taxi AND (voiture_row.km - reparation.km_cpt) <= 30000;
+		
+		IF nb_rep = 0 THEN
+			INSERT INTO reparation VALUES (seq_rep.nextval, voiture_row.id_taxi, 'Revision', voiture_row.km, 60);
+		END IF;
+	END LOOP;
+END;
+
+CREATE OR REPLACE PROCEDURE minuteur(req varchar2) IS
+	duree p NUMBER;
+	res INT;
+BEGIN
+	duree _p := DBMS_UTILITY.GET _TIME;
+	EXECUTE IMMEDIATE req INTO res;
+	DBMS_OUTPUT.PUT._LINE("* II ((DBMS _UTILITY.GET_TIME - duree p)/100) Il ' secondes.");
+END;
+
+SHOW ERRORS

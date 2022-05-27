@@ -1,0 +1,19 @@
+ARTICLE_MOTCLES, 1N ARTICLE, 1N MOTCLES
+MOTCLES: idMot, mot, descriptif
+
+:
+ARTICLE: idArticle, titre, pageDebut, pageFin,volume, serie
+EST_PUBLIE, 11 ARTICLE, 1N REVUE
+REVUE: idRevue, nomRevue, anneeCreation
+EDITE_REVUE, 11 REVUE, 0N EDITEUR
+EDITEUR: idEditeur, nom, telephone, fax, pays
+
+ARTICLE_AUTEUR, 1N ARTICLE, 0N AUTEUR
+:
+EDITE_OUVRAGE, 11 OUVRAGE, 0N EDITEUR
+
+ORGANISME: idOrganisme, nom, telephone, pays
+AUTEUR_ORGANISME, 1N AUTEUR, 1N ORGANISME
+AUTEUR: idAuteur, nomAuteur, email, siteWeb
+OUVRAGE_AUTEUR, 0N OUVRAGE, 1N AUTEUR
+OUVRAGE: idOuvrage, titre, annee
